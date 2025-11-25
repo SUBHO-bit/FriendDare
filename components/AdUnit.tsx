@@ -10,7 +10,7 @@ interface AdUnitProps {
 export const AdUnit: React.FC<AdUnitProps> = ({ className = '', label = 'Advertisement' }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   
-  // Specific settings from your code
+  // Specific settings from your provided code
   const containerId = "container-3a4ed4c650d8511c68869276a4a32a01";
   const scriptSrc = "https://pl28132820.effectivegatecpm.com/3a4ed4c650d8511c68869276a4a32a01/invoke.js";
 
@@ -18,37 +18,55 @@ export const AdUnit: React.FC<AdUnitProps> = ({ className = '', label = 'Adverti
     const container = containerRef.current;
     if (!container) return;
 
-    // 1. Clear previous content
+    // 1. Clear previous content to prevent duplicates
     container.innerHTML = '';
 
-    // 2. Create an iframe to hold the ad
+    // 2. Create the iframe
     const iframe = document.createElement('iframe');
     iframe.title = "Ad Content";
-    // Set a reasonable default height, but allow it to be flexible if needed
     iframe.style.width = '100%';
-    iframe.style.height = '300px'; 
-    iframe.style.border = '0';
+    iframe.style.height = '100%';
+    iframe.style.minHeight = '300px'; 
+    iframe.style.border = 'none';
     iframe.style.overflow = 'hidden';
     iframe.scrolling = "no";
-
-    // 3. Append the iframe to the DOM *before* writing to it
+    
     container.appendChild(iframe);
 
-    // 4. Write the ad code into the iframe
     const doc = iframe.contentWindow?.document;
     if (doc) {
+      // 3. Write the HTML. Important: DIV comes BEFORE Script to ensure it exists when script runs.
       const adContent = `
         <!DOCTYPE html>
-        <html>
+        <html lang="en">
           <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <base target="_top" />
             <style>
-              body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; }
+              body { 
+                margin: 0; 
+                padding: 0; 
+                display: flex; 
+                justify-content: center; 
+                align-items: center; 
+                width: 100%;
+                height: 100%;
+                background-color: transparent;
+                font-family: sans-serif;
+              }
+              /* Ensure the container can take width */
+              #${containerId} {
+                display: block;
+                width: 100%;
+                text-align: center;
+              }
             </style>
           </head>
           <body>
-            <script async="async" data-cfasync="false" src="${scriptSrc}"></script>
+            <!-- Container must be present before the script runs -->
             <div id="${containerId}"></div>
+            <script async="async" data-cfasync="false" src="${scriptSrc}"></script>
           </body>
         </html>
       `;
@@ -64,11 +82,15 @@ export const AdUnit: React.FC<AdUnitProps> = ({ className = '', label = 'Adverti
   }, []);
 
   return (
-    <div className={`my-8 flex flex-col items-center justify-center ${className}`}>
-      {label && <span className="text-[10px] uppercase tracking-wider font-semibold mb-2 text-slate-300">{label}</span>}
+    <div className={`my-6 w-full flex flex-col items-center ${className}`}>
+      {label && (
+        <span className="text-[10px] uppercase tracking-wider font-bold text-slate-300 mb-2">
+          {label}
+        </span>
+      )}
       <div 
         ref={containerRef}
-        className="w-full flex justify-center bg-slate-50 min-h-[300px] rounded-lg border border-slate-100 border-dashed overflow-hidden"
+        className="w-full flex justify-center min-h-[250px]"
       >
         {/* Iframe will be injected here */}
       </div>
