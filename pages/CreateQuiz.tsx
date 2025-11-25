@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ArrowRight, Copy, Check, Share2, Link as LinkIcon, RefreshCw, Zap } from 'lucide-react';
 import { Button } from '../components/Button';
 import { SEO } from '../components/SEO';
+import { AdUnit } from '../components/AdUnit';
 
 // Data for Pre-made Questions
 const QUESTIONS_DATA: Record<string, { text: string; options: string[] }[]> = {
@@ -319,6 +320,8 @@ export const CreateQuiz: React.FC = () => {
               </p>
             </div>
           )}
+
+          <AdUnit className="mt-8" />
         </div>
       </div>
     </>
